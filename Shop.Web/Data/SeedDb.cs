@@ -12,14 +12,18 @@
     {
         private readonly DataContext context;
         //private readonly IUserHelper userHelper;
+        private readonly UserManager<User> userManager;
         private readonly Random random;
 
-        public SeedDb(DataContext context)
+        public SeedDb(DataContext context, UserManager<User> userManager)
         {
             this.context = context;
+            this.userManager = userManager;
             //this.userHelper = userHelper;
             this.random = new Random();
         }
+
+
 
         public async Task SeedAsync()
         {
@@ -46,31 +50,31 @@
 
 
             //// Add user
-            //var user = await this.userHelper.GetUserByEmailAsync("jzuluaga55@gmail.com");
-            //if (user == null)
-            //{
-            //    user = new User
-            //    {
-            //        FirstName = "Juan",
-            //        LastName = "Zuluaga",
-            //        Email = "jzuluaga55@gmail.com",
-            //        UserName = "jzuluaga55@gmail.com",
-            //        PhoneNumber = "350 634 2747",
-            //        Address = "Calle Luna Calle Sol",
-            //        CityId = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault().Id,
-            //        City = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault()
-            //    };
+            var user = await this.userManager.FindByEmailAsync("jzuluaga55@gmail.com");
+            if (user == null)
+            {
+                user = new User
+                {
+                    FirstName = "Juan",
+                    LastName = "Zuluaga",
+                    Email = "jzuluaga55@gmail.com",
+                    UserName = "jzuluaga55@gmail.com",
+                    PhoneNumber = "350 634 2747",
+                    //Address = "Calle Luna Calle Sol",
+                    //CityId = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault().Id,
+                    //City = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault()
+                };
 
-            //    var result = await this.userHelper.AddUserAsync(user, "123456");
-            //    if (result != IdentityResult.Success)
-            //    {
-            //        throw new InvalidOperationException("Could not create the user in seeder");
-            //    }
+                var result = await this.userManager.CreateAsync(user, "123456");
+                if (result != IdentityResult.Success)
+                {
+                    throw new InvalidOperationException("Could not create the user in seeder");
+                }
 
-            //    await this.userHelper.AddUserToRoleAsync(user, "Admin");
-            //    var token = await this.userHelper.GenerateEmailConfirmationTokenAsync(user);
-            //    await this.userHelper.ConfirmEmailAsync(user, token);
-            //}
+                //await this.userHelper.AddUserToRoleAsync(user, "Admin");
+                //var token = await this.userHelper.GenerateEmailConfirmationTokenAsync(user);
+                //await this.userHelper.ConfirmEmailAsync(user, token);
+            }
 
             //var isInRole = await this.userHelper.IsUserInRoleAsync(user, "Admin");
             //if (!isInRole)
@@ -82,19 +86,15 @@
             // Add products
             if (!this.context.Products.Any())
             {
-                //this.AddProduct("iPhone X", user);
-                //this.AddProduct("Magic Mouse", user);
-                //this.AddProduct("iWatch Series 4", user);
+                this.AddProduct("iPhone X", user);
+                this.AddProduct("Magic Mouse", user);
+                this.AddProduct("iWatch Series 4", user);
 
-                this.AddProduct("iPhone X");
-                this.AddProduct("Magic Mouse");
-                this.AddProduct("iWatch Series 4");
                 await this.context.SaveChangesAsync();
             }
         }
 
-        //private void AddProduct(string name, User user)
-        private void AddProduct(string name)
+        private void AddProduct(string name, User user)
         {
             this.context.Products.Add(new Product
             {
@@ -102,7 +102,7 @@
                 Price = this.random.Next(1000),
                 IsAvailabe = true,
                 Stock = this.random.Next(100),
-                //User = user
+                User = user
             });
         }
     }

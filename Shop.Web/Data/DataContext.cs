@@ -5,7 +5,7 @@
     using Shop.Web.Data.Entities;
     using System.Linq;
 
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<User>
 
     {
         public DbSet<Product> Products { get; set; }
