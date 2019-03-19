@@ -3,7 +3,7 @@
     using System;
     using System.ComponentModel.DataAnnotations;
 
-    public class Product
+    public class Product: IEntity
     {
         public int Id { get; set; }
 
@@ -33,17 +33,17 @@
 
         public User User { get; set; }
 
-        public string ImageFullPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(this.ImageUrl))
-                {
-                    return null;
-                }
+        //public string ImageFullPath
+        //{
+        //    get
+        //    {
+        //        if (string.IsNullOrEmpty(this.ImageUrl))
+        //        {
+        //            return null;
+        //        }
 
-                return $"https://shopzulu.azurewebsites.net{this.ImageUrl.Substring(1)}";
-            }
-        }
+        //        return $"https://shopzulu.azurewebsites.net{this.ImageUrl.Substring(1)}";
+        //    }
+        //}
     }
 }
