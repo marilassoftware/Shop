@@ -7,6 +7,7 @@
     using Shop.Web.Helpers;
     using Shop.Web.Models;
     using System.IO;
+    using System.Linq;
     using System.Threading.Tasks;
 
     public class ProductsController : Controller
@@ -24,7 +25,7 @@
         // GET: Products
         public IActionResult Index()
         {
-            return View(this.productRepository.GetAll());
+            return View(this.productRepository.GetAll().OrderBy(x => x.Name));
         }
 
         // GET: Products/Details/5
