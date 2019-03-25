@@ -1,6 +1,7 @@
 ﻿namespace Shop.UIForms.ViewModels
 {
     using GalaSoft.MvvmLight.Command;
+    using Shop.UIForms.Views;
     using System;
     using System.Collections.Generic;
     using System.Text;
@@ -43,11 +44,8 @@
                 return;
             }
 
-            await Application.Current.MainPage.DisplayAlert(
-                    "Save",
-                    "Ingresado",
-                    "Accept");
-            return;
+            MainViewModel.GetInstance().Products = new ProductsViewModel();
+            await Application.Current.MainPage.Navigation.PushAsync(new ProductsPage());
 
             //this.IsRunning = true;
             //this.IsEnabled = false;
