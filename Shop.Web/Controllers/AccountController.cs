@@ -4,10 +4,15 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.IdentityModel.Tokens;
     using Models;
     using Shop.Web.Data;
     using Shop.Web.Data.Entities;
+    using System;
+    using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
+    using System.Security.Claims;
+    using System.Text;
     using System.Threading.Tasks;
 
     public class AccountController : Controller
@@ -115,7 +120,7 @@
 
                     var result2 = await this.userHelper.LoginAsync(x);
 
-                    if(result2.Succeeded)
+                    if (result2.Succeeded)
                     {
                         return this.RedirectToAction("Index", "Home");
                     }
@@ -140,146 +145,146 @@
             return this.View(model);
         }
 
-        //public async Task<IActionResult> ChangeUser()
-        //{
-        //    var user = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
-        //    var model = new ChangeUserViewModel();
+        public async Task<IActionResult> ChangeUser()
+        {
+            var user = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+            var model = new ChangeUserViewModel();
 
-        //    if (user != null)
-        //    {
-        //        model.FirstName = user.FirstName;
-        //        model.LastName = user.LastName;
-        //        model.Address = user.Address;
-        //        model.PhoneNumber = user.PhoneNumber;
+            if (user != null)
+            {
+                model.FirstName = user.FirstName;
+                model.LastName = user.LastName;
+                //model.Address = user.Address;
+                //model.PhoneNumber = user.PhoneNumber;
 
-        //        var city = await this.countryRepository.GetCityAsync(user.CityId);
-        //        if (city != null)
-        //        {
-        //            var country = await this.countryRepository.GetCountryAsync(city);
-        //            if (country != null)
-        //            {
-        //                model.CountryId = country.Id;
-        //                model.Cities = this.countryRepository.GetComboCities(country.Id);
-        //                model.Countries = this.countryRepository.GetComboCountries();
-        //                model.CityId = user.CityId;
-        //            }
-        //        }
-        //    }
+                //var city = await this.countryRepository.GetCityAsync(user.CityId);
+                //if (city != null)
+                //{
+                //    var country = await this.countryRepository.GetCountryAsync(city);
+                //    if (country != null)
+                //    {
+                //        model.CountryId = country.Id;
+                //        model.Cities = this.countryRepository.GetComboCities(country.Id);
+                //        model.Countries = this.countryRepository.GetComboCountries();
+                //        model.CityId = user.CityId;
+                //    }
+                //}
+            }
 
-        //    model.Cities = this.countryRepository.GetComboCities(model.CountryId);
-        //    model.Countries = this.countryRepository.GetComboCountries();
-        //    return this.View(model);
-        //}
+            //model.Cities = this.countryRepository.GetComboCities(model.CountryId);
+            //model.Countries = this.countryRepository.GetComboCountries();
+            return this.View(model);
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> ChangeUser(ChangeUserViewModel model)
-        //{
-        //    if (this.ModelState.IsValid)
-        //    {
-        //        var user = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
-        //        if (user != null)
-        //        {
-        //            var city = await this.countryRepository.GetCityAsync(model.CityId);
+        [HttpPost]
+        public async Task<IActionResult> ChangeUser(ChangeUserViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+                if (user != null)
+                {
+                    //var city = await this.countryRepository.GetCityAsync(model.CityId);
 
-        //            user.FirstName = model.FirstName;
-        //            user.LastName = model.LastName;
-        //            user.Address = model.Address;
-        //            user.PhoneNumber = model.PhoneNumber;
-        //            user.CityId = model.CityId;
-        //            user.City = city;
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    //user.Address = model.Address;
+                    //user.PhoneNumber = model.PhoneNumber;
+                    //user.CityId = model.CityId;
+                    //user.City = city;
 
-        //            var respose = await this.userHelper.UpdateUserAsync(user);
-        //            if (respose.Succeeded)
-        //            {
-        //                this.ViewBag.UserMessage = "User updated!";
-        //            }
-        //            else
-        //            {
-        //                this.ModelState.AddModelError(string.Empty, respose.Errors.FirstOrDefault().Description);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            this.ModelState.AddModelError(string.Empty, "User no found.");
-        //        }
-        //    }
+                    var respose = await this.userHelper.UpdateUserAsync(user);
+                    if (respose.Succeeded)
+                    {
+                        this.ViewBag.UserMessage = "User updated!";
+                    }
+                    else
+                    {
+                        this.ModelState.AddModelError(string.Empty, respose.Errors.FirstOrDefault().Description);
+                    }
+                }
+                else
+                {
+                    this.ModelState.AddModelError(string.Empty, "User no found.");
+                }
+            }
 
-        //    return this.View(model);
-        //}
+            return this.View(model);
+        }
 
         public IActionResult ChangePassword()
         {
             return this.View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-        //{
-        //    if (this.ModelState.IsValid)
-        //    {
-        //        var user = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
-        //        if (user != null)
-        //        {
-        //            var result = await this.userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-        //            if (result.Succeeded)
-        //            {
-        //                return this.RedirectToAction("ChangeUser");
-        //            }
-        //            else
-        //            {
-        //                this.ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            this.ModelState.AddModelError(string.Empty, "User no found.");
-        //        }
-        //    }
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+                if (user != null)
+                {
+                    var result = await this.userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        return this.RedirectToAction("ChangeUser");
+                    }
+                    else
+                    {
+                        this.ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
+                    }
+                }
+                else
+                {
+                    this.ModelState.AddModelError(string.Empty, "User no found.");
+                }
+            }
 
-        //    return this.View(model);
-        //}
+            return this.View(model);
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
-        //{
-        //    if (this.ModelState.IsValid)
-        //    {
-        //        var user = await this.userHelper.GetUserByEmailAsync(model.Username);
-        //        if (user != null)
-        //        {
-        //            var result = await this.userHelper.ValidatePasswordAsync(
-        //                user,
-        //                model.Password);
+        [HttpPost]
+        public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await this.userHelper.GetUserByEmailAsync(model.Username);
+                if (user != null)
+                {
+                    var result = await this.userHelper.ValidatePasswordAsync(
+                        user,
+                        model.Password);
 
-        //            if (result.Succeeded)
-        //            {
-        //                var claims = new[]
-        //                {
-        //                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-        //                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        //                };
+                    if (result.Succeeded)
+                    {
+                        var claims = new[]
+                        {
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                        };
 
-        //                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Tokens:Key"]));
-        //                var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        //                var token = new JwtSecurityToken(
-        //                    this.configuration["Tokens:Issuer"],
-        //                    this.configuration["Tokens:Audience"],
-        //                    claims,
-        //                    expires: DateTime.UtcNow.AddDays(15),
-        //                    signingCredentials: credentials);
-        //                var results = new
-        //                {
-        //                    token = new JwtSecurityTokenHandler().WriteToken(token),
-        //                    expiration = token.ValidTo
-        //                };
+                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Tokens:Key"]));
+                        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                        var token = new JwtSecurityToken(
+                            this.configuration["Tokens:Issuer"],
+                            this.configuration["Tokens:Audience"],
+                            claims,
+                            expires: DateTime.UtcNow.AddDays(15),
+                            signingCredentials: credentials);
+                        var results = new
+                        {
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+                            expiration = token.ValidTo
+                        };
 
-        //                return this.Created(string.Empty, results);
-        //            }
-        //        }
-        //    }
+                        return this.Created(string.Empty, results);
+                    }
+                }
+            }
 
-        //    return this.BadRequest();
-        //}
+            return this.BadRequest();
+        }
 
         public IActionResult NotAuthorized()
         {

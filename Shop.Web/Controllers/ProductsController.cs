@@ -12,6 +12,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly IProductRepository productRepository;

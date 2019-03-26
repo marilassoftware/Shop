@@ -10,9 +10,11 @@ namespace Shop.Web
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.IdentityModel.Tokens;
     using Shop.Web.Data;
     using Shop.Web.Data.Entities;
     using Shop.Web.Helpers;
+    using System.Text;
 
     public class Startup
     {
@@ -27,10 +29,12 @@ namespace Shop.Web
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.Configure<PasswordHasherOptions>(options => options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2);
+
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
                 cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
-                cfg.SignIn.RequireConfirmedEmail = true;
+                cfg.SignIn.RequireConfirmedEmail = false;
                 cfg.User.RequireUniqueEmail = true;
                 cfg.Password.RequireDigit = false;
                 cfg.Password.RequiredUniqueChars = 0;
@@ -39,13 +43,27 @@ namespace Shop.Web
                 cfg.Password.RequireUppercase = false;
                 cfg.Password.RequiredLength = 6;
             })
+
             .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<DataContext>();
 
+            services.AddAuthentication()
+                           .AddCookie()
+                           .AddJwtBearer(cfg =>
+                           {
+                               cfg.TokenValidationParameters = new TokenValidationParameters
+                               {
+                                   ValidIssuer = this.Configuration["Tokens:Issuer"],
+                                   ValidAudience = this.Configuration["Tokens:Audience"],
+                                   IssuerSigningKey = new SymmetricSecurityKey(
+                                       Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
+                               };
+                           });
             services.AddDbContext<DataContext>(cfg =>
             {
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
+
 
             services.AddTransient<SeedDb>();
             services.AddScoped<IProductRepository, ProductRepository>();
