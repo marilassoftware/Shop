@@ -12,7 +12,6 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    [Authorize]
     public class ProductsController : Controller
     {
         private readonly IProductRepository productRepository;
@@ -48,6 +47,7 @@
             return View(product);
         }
 
+        [Authorize (Roles = "Admin")]
         // GET: Products/Create
         public IActionResult Create()
         {
@@ -109,6 +109,7 @@
 
 
         // GET: Products/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -196,6 +197,7 @@
         }
 
         // GET: Products/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

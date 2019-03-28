@@ -26,8 +26,8 @@
         {
             await this.context.Database.EnsureCreatedAsync();
 
-            //await this.userHelper.CheckRoleAsync("Admin");
-            //await this.userHelper.CheckRoleAsync("Customer");
+            await this.userHelper.CheckRoleAsync("Admin");
+            await this.userHelper.CheckRoleAsync("Customer");
 
             //if (!this.context.Countries.Any())
             //{
@@ -68,16 +68,16 @@
                     throw new InvalidOperationException("Could not create the user in seeder");
                 }
 
-                //await this.userHelper.AddUserToRoleAsync(user, "Admin");
+                await this.userHelper.AddUserToRoleAsync(user, "Admin");
                 //var token = await this.userHelper.GenerateEmailConfirmationTokenAsync(user);
-                //await this.userHelper.ConfirmEmailAsync(user, token);
+               //await this.userHelper.ConfirmEmailAsync(user, token);
             }
 
-            //var isInRole = await this.userHelper.IsUserInRoleAsync(user, "Admin");
-            //if (!isInRole)
-            //{
-            //    await this.userHelper.AddUserToRoleAsync(user, "Admin");
-            //}
+            var isInRole = await this.userHelper.IsUserInRoleAsync(user, "Admin");
+            if (!isInRole)
+            {
+                await this.userHelper.AddUserToRoleAsync(user, "Admin");
+            }
 
 
             // Add products
