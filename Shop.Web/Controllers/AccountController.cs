@@ -18,18 +18,18 @@
     public class AccountController : Controller
     {
         private readonly IUserHelper userHelper;
-        //private readonly IMailHelper mailHelper;
+        private readonly IMailHelper mailHelper;
         private readonly ICountryRepository countryRepository;
         private readonly IConfiguration configuration;
 
         public AccountController(
             IUserHelper userHelper,
-            //IMailHelper mailHelper,
+            IMailHelper mailHelper,
             ICountryRepository countryRepository,
             IConfiguration configuration)
         {
             this.userHelper = userHelper;
-            //this.mailHelper = mailHelper;
+            this.mailHelper = mailHelper;
             this.countryRepository = countryRepository;
             this.configuration = configuration;
         }
@@ -112,32 +112,18 @@
                         return this.View(model);
                     }
 
-                    var x = new LoginViewModel
+                    var myToken = await this.userHelper.GenerateEmailConfirmationTokenAsync(user);
+                    var tokenLink = this.Url.Action("ConfirmEmail", "Account", new
                     {
-                        Password = model.Password,
-                        RememberMe = false,
-                        Username = model.Username
-                    };
+                        userid = user.Id,
+                        token = myToken
+                    }, protocol: HttpContext.Request.Scheme);
 
-                    var result2 = await this.userHelper.LoginAsync(x);
-
-                    if (result2.Succeeded)
-                    {
-                        return this.RedirectToAction("Index", "Home");
-                    }
-
-                    //var myToken = await this.userHelper.GenerateEmailConfirmationTokenAsync(user);
-                    //var tokenLink = this.Url.Action("ConfirmEmail", "Account", new
-                    //{
-                    //    userid = user.Id,
-                    //    token = myToken
-                    //}, protocol: HttpContext.Request.Scheme);
-
-                    //this.mailHelper.SendMail(model.Username, "Shop Email confirmation", $"<h1>Shop Email Confirmation</h1>" +
-                    //    $"To allow the user, " +
-                    //    $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
-                    //this.ViewBag.Message = "The instructions to allow your user has been sent to email.";
-                    //return this.View(model);
+                    this.mailHelper.SendMail(model.Username, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+                        $"To allow the user, " +
+                        $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
+                    this.ViewBag.Message = "The instructions to allow your user has been sent to email.";
+                    return this.View(model);
                 }
 
                 this.ModelState.AddModelError(string.Empty, "The username is already registered.");
@@ -145,6 +131,7 @@
 
             return this.View(model);
         }
+
 
         public async Task<IActionResult> ChangeUser()
         {
@@ -299,84 +286,89 @@
             return this.Json(country.Cities.OrderBy(c => c.Name));
         }
 
-        //public async Task<IActionResult> ConfirmEmail(string userId, string token)
-        //{
-        //    if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
-        //    {
-        //        return this.NotFound();
-        //    }
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return this.NotFound();
+            }
 
-        //    var user = await this.userHelper.GetUserByIdAsync(userId);
-        //    if (user == null)
-        //    {
-        //        return this.NotFound();
-        //    }
+            var user = await this.userHelper.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return this.NotFound();
+            }
 
-        //    var result = await this.userHelper.ConfirmEmailAsync(user, token);
-        //    if (!result.Succeeded)
-        //    {
-        //        return this.NotFound();
-        //    }
+            var result = await this.userHelper.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return this.NotFound();
+            }
 
-        //    return View();
-        //}
+            return View();
+        }
+
+
 
         public IActionResult RecoverPassword()
         {
             return this.View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
-        //{
-        //    if (this.ModelState.IsValid)
-        //    {
-        //        var user = await this.userHelper.GetUserByEmailAsync(model.Email);
-        //        if (user == null)
-        //        {
-        //            ModelState.AddModelError(string.Empty, "The email doesn't correspont to a registered user.");
-        //            return this.View(model);
-        //        }
+        [HttpPost]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await this.userHelper.GetUserByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "The email doesn't correspont to a registered user.");
+                    return this.View(model);
+                }
 
-        //        var myToken = await this.userHelper.GeneratePasswordResetTokenAsync(user);
-        //        var link = this.Url.Action("ResetPassword", "Account", new { token = myToken }, protocol: HttpContext.Request.Scheme);
-        //        var mailSender = new MailHelper(configuration);
-        //        mailSender.SendMail(model.Email, "Shop Password Reset", $"<h1>Shop Recover Password</h1>" +
-        //            $"To reset the password click in this link:</br></br>" +
-        //            $"<a href = \"{link}\">Reset Password</a>");
-        //        this.ViewBag.Message = "The instructions to recover your password has been sent to email.";
-        //        return this.View();
+                var myToken = await this.userHelper.GeneratePasswordResetTokenAsync(user);
+                var link = this.Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new { token = myToken }, protocol: HttpContext.Request.Scheme);
+                this.mailHelper.SendMail(model.Email, "Shop Password Reset", $"<h1>Shop Password Reset</h1>" +
+                    $"To reset the password click in this link:</br></br>" +
+                    $"<a href = \"{link}\">Reset Password</a>");
+                this.ViewBag.Message = "The instructions to recover your password has been sent to email.";
+                return this.View();
 
-        //    }
+            }
 
-        //    return this.View(model);
-        //}
+            return this.View(model);
+        }
 
         public IActionResult ResetPassword(string token)
         {
             return View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
-        //{
-        //    var user = await this.userHelper.GetUserByEmailAsync(model.UserName);
-        //    if (user != null)
-        //    {
-        //        var result = await this.userHelper.ResetPasswordAsync(user, model.Token, model.Password);
-        //        if (result.Succeeded)
-        //        {
-        //            this.ViewBag.Message = "Password reset successful.";
-        //            return this.View();
-        //        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await this.userHelper.GetUserByEmailAsync(model.UserName);
+            if (user != null)
+            {
+                var result = await this.userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    this.ViewBag.Message = "Password reset successful.";
+                    return this.View();
+                }
 
-        //        this.ViewBag.Message = "Error while resetting the password.";
-        //        return View(model);
-        //    }
+                this.ViewBag.Message = "Error while resetting the password.";
+                return View(model);
+            }
 
-        //    this.ViewBag.Message = "User not found.";
-        //    return View(model);
-        //}
+            this.ViewBag.Message = "User not found.";
+            return View(model);
+        }
+
 
         //[Authorize(Roles = "Admin")]
         //public async Task<IActionResult> Index()
