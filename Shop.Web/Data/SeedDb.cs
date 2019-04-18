@@ -4,6 +4,7 @@
     using Microsoft.AspNetCore.Identity;
     using Shop.Web.Helpers;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -29,21 +30,21 @@
             await this.userHelper.CheckRoleAsync("Admin");
             await this.userHelper.CheckRoleAsync("Customer");
 
-            //if (!this.context.Countries.Any())
-            //{
-            //    var cities = new List<City>();
-            //    cities.Add(new City { Name = "Medellín" });
-            //    cities.Add(new City { Name = "Bogotá" });
-            //    cities.Add(new City { Name = "Calí" });
+            if (!this.context.Countries.Any())
+            {
+                var cities = new List<City>();
+                cities.Add(new City { Name = "Medellín" });
+                cities.Add(new City { Name = "Bogotá" });
+                cities.Add(new City { Name = "Calí" });
 
-            //    this.context.Countries.Add(new Country
-            //    {
-            //        Cities = cities,
-            //        Name = "Colombia"
-            //    });
+                this.context.Countries.Add(new Country
+                {
+                    Cities = cities,
+                    Name = "Colombia"
+                });
 
-            //    await this.context.SaveChangesAsync();
-            //}
+                await this.context.SaveChangesAsync();
+            }
 
 
             //// Add user
@@ -57,9 +58,9 @@
                     Email = "jzuluaga55@gmail.com",
                     UserName = "jzuluaga55@gmail.com",
                     PhoneNumber = "350 634 2747",
-                    //Address = "Calle Luna Calle Sol",
-                    //CityId = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault().Id,
-                    //City = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault()
+                    Address = "Calle Luna Calle Sol",
+                    CityId = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault().Id,
+                    City = this.context.Countries.FirstOrDefault().Cities.FirstOrDefault()
                 };
 
                 var result = await this.userHelper.AddUserAsync(user, "123456");
