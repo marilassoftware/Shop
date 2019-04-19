@@ -92,11 +92,12 @@
 
         private void RefresProductsList()
         {
+            var url = Application.Current.Resources["UrlAPI"].ToString();
             this.Products = new ObservableCollection<ProductItemViewModel>(
                 this.myProducts.Select(p => new ProductItemViewModel
                 {
                     Id = p.Id,
-                    ImageUrl = p.ImageUrl,
+                    ImageUrl = url + p.ImageUrl.Substring(1),
                     ImageFullPath = p.ImageFullPath,
                     IsAvailabe = p.IsAvailabe,
                     LastPurchase = p.LastPurchase,

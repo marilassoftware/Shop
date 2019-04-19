@@ -23,10 +23,10 @@
                 case "SetupPage":
                     await App.Navigator.PushAsync(new SetupPage());
                     break;
-                //case "ProfilePage":
-                //    mainViewModel.Profile = new ProfileViewModel();
-                //    await App.Navigator.PushAsync(new ProfilePage());
-                //    break;
+                case "ProfilePage":
+                    mainViewModel.Profile = new ProfileViewModel();
+                    await App.Navigator.PushAsync(new ProfilePage());
+                    break;
                 default:
                     Settings.User = string.Empty;
                     Settings.IsRemember = false;

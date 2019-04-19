@@ -23,6 +23,8 @@ namespace Shop.UIForms.Helpers
 
         public static string EmailError => Resource.EmailError;
 
+        public static string PasswordError => Resource.PasswordError;
+
         public static string LoginError => Resource.LoginError;
 
         public static string Login => Resource.Login;
@@ -33,13 +35,13 @@ namespace Shop.UIForms.Helpers
 
         public static string Password => Resource.Password;
 
-        public static string PasswordError => Resource.PasswordError;
-
         public static string PasswordPlaceHolder => Resource.PasswordPlaceHolder;
 
         public static string Remember => Resource.Remember;
 
         public static string RegisterNewUser => Resource.RegisterNewUser;
+
+        public static string Forgot => Resource.Forgot;
     }
 
 }
