@@ -90,8 +90,8 @@
             {
                 IsAvailabe = true,
                 Name = this.Name,
-                Price = 0, //price
-                User = new User { UserName = MainViewModel.GetInstance().UserEmail }
+                Price = price,
+                User = new User { Email = MainViewModel.GetInstance().UserEmail }
                 //ImageArray = imageArray
             };
 
@@ -117,7 +117,7 @@
             }
 
             var newProduct = (Product)response.Result;
-            //MainViewModel.GetInstance().Products.AddProductToList(newProduct);
+            MainViewModel.GetInstance().Products.AddProductToList(newProduct);
             await App.Navigator.PopAsync();
         }
 

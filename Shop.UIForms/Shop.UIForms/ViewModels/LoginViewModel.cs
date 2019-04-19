@@ -30,6 +30,7 @@
         {
             get => this.isEnabled;
             set => this.SetValue(ref this.isEnabled, value);
+
         }
 
         public string Email { get; set; }
@@ -47,6 +48,8 @@
             this.apiService = new ApiService();
             this.IsEnabled = true;
             this.IsRemember = true;
+            this.Email = "andrestabares@gmail.com";
+            this.Password = "123456";
         }
 
         private async void Login()
