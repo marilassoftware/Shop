@@ -12,7 +12,7 @@
         public string Name { get; set; }
 
         [JsonProperty("price")]
-        public Decimal Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty("imageUrl")]
         public string ImageUrl { get; set; }
@@ -33,7 +33,9 @@
         public User User { get; set; }
 
         [JsonProperty("imageFullPath")]
-        public String ImageFullPath { get; set; }
+        public string ImageFullPath { get; set; }
+
+        public byte[] ImageArray { get; set; }
 
         public override string ToString()
         {
