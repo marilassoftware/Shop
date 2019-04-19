@@ -1,6 +1,7 @@
 ﻿namespace Shop.UIForms.ViewModels
 {
     using GalaSoft.MvvmLight.Command;
+    using Shop.Common.Helpers;
     using Shop.UIForms.Views;
     using System.Windows.Input;
     using Xamarin.Forms;
@@ -27,11 +28,11 @@
                 //    await App.Navigator.PushAsync(new ProfilePage());
                 //    break;
                 default:
-                    //Settings.User = string.Empty;
-                    //Settings.IsRemember = false;
-                    //Settings.Token = string.Empty;
-                    //Settings.UserEmail = string.Empty;
-                    //Settings.UserPassword = string.Empty;
+                    Settings.User = string.Empty;
+                    Settings.IsRemember = false;
+                    Settings.Token = string.Empty;
+                    Settings.UserEmail = string.Empty;
+                    Settings.UserPassword = string.Empty;
 
                     MainViewModel.GetInstance().Login = new LoginViewModel();
                     Application.Current.MainPage = new NavigationPage(new LoginPage());

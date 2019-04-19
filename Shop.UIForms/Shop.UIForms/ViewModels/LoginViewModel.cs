@@ -2,9 +2,11 @@
 {
     using GalaSoft.MvvmLight.Command;
     using Newtonsoft.Json;
+    using Shop.Common.Helpers;
     //using Shop.Common.Helpers;
     using Shop.Common.Models;
     using Shop.Common.Services;
+    using Shop.UIForms.Helpers;
     using Shop.UIForms.Views;
     //using Shop.UIForms.Helpers;
     //using Shop.UIForms.Views;
@@ -56,19 +58,19 @@
         {
             if (string.IsNullOrEmpty(this.Email))
             {
-                //await Application.Current.MainPage.DisplayAlert(
-                //    Languages.Error,
-                //    Languages.EmailError,
-                //    Languages.Accept);
+                await Application.Current.MainPage.DisplayAlert(
+                    Languages.Error,
+                    Languages.EmailError,
+                    Languages.Accept);
                 return;
             }
 
             if (string.IsNullOrEmpty(this.Password))
             {
-                //await Application.Current.MainPage.DisplayAlert(
-                //    Languages.Error,
-                //    Languages.PasswordError,
-                //    Languages.Accept);
+                await Application.Current.MainPage.DisplayAlert(
+                    Languages.Error,
+                    Languages.PasswordError,
+                    Languages.Accept);
                 return;
             }
 
@@ -93,10 +95,10 @@
 
             if (!response.IsSuccess)
             {
-                //await Application.Current.MainPage.DisplayAlert(
-                //    Languages.Error,
-                //    Languages.LoginError,
-                //    Languages.Accept);
+                await Application.Current.MainPage.DisplayAlert(
+                    Languages.Error,
+                    Languages.LoginError,
+                    Languages.Accept);
                 return;
             }
 
@@ -118,10 +120,10 @@
             mainViewModel.UserPassword = this.Password;
             mainViewModel.Products = new ProductsViewModel();
 
-            //Settings.IsRemember = this.IsRemember;
-            //Settings.UserEmail = this.Email;
-            //Settings.UserPassword = this.Password;
-            //Settings.Token = JsonConvert.SerializeObject(token);
+            Settings.IsRemember = this.IsRemember;
+            Settings.UserEmail = this.Email;
+            Settings.UserPassword = this.Password;
+            Settings.Token = JsonConvert.SerializeObject(token);
             //Settings.User = JsonConvert.SerializeObject(user);
 
             //Application.Current.MainPage = new MasterPage();
