@@ -35,14 +35,13 @@
         {
             this.IsRefreshing = true;
 
-            //var url = Application.Current.Resources["UrlAPI"].ToString();
+            var url = Application.Current.Resources["UrlAPI"].ToString();
             var response = await this.apiService.GetListAsync<Product>(
-                "https://shopmarilas.azurewebsites.net",
+                url,
                 "/api",
-                "/Products");
-            //,
-            //    "bearer",
-            //    MainViewModel.GetInstance().Token.Token);
+                "/Products",
+                "bearer",
+                MainViewModel.GetInstance().Token.Token);
 
             this.IsRefreshing = false;
 
