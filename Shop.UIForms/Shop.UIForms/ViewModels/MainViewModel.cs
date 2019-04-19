@@ -1,9 +1,12 @@
-﻿using Shop.Common.Models;
+﻿using GalaSoft.MvvmLight.Command;
+using Shop.Common.Models;
+using Shop.UIForms.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 
 namespace Shop.UIForms.ViewModels
 {
@@ -19,6 +22,14 @@ namespace Shop.UIForms.ViewModels
 
         public ObservableCollection<MenuItemViewModel> Menus { get; set; }
 
+        public AddProductViewModel AddProduct { get; set; }
+
+        public ICommand AddProductCommand => new RelayCommand(this.GoAddProduct);
+
+
+        public string UserEmail { get; set; }
+
+        public string UserPassword { get; set; }
 
         public MainViewModel()
         {
@@ -70,6 +81,12 @@ namespace Shop.UIForms.ViewModels
             }
 
             return instance;
+        }
+
+        private async void GoAddProduct()
+        {
+            this.AddProduct = new AddProductViewModel();
+            await App.Navigator.PushAsync(new AddProductPage());
         }
 
     }

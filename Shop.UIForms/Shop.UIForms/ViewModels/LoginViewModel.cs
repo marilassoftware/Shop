@@ -111,8 +111,8 @@
             var mainViewModel = MainViewModel.GetInstance();
             //mainViewModel.User = user;
             mainViewModel.Token = token;
-            //mainViewModel.UserEmail = this.Email;
-            //mainViewModel.UserPassword = this.Password;
+            mainViewModel.UserEmail = this.Email;
+            mainViewModel.UserPassword = this.Password;
             mainViewModel.Products = new ProductsViewModel();
 
             //Settings.IsRemember = this.IsRemember;
